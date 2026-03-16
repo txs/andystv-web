@@ -13,10 +13,6 @@ if (Astro.locals.user) {
       <h1>歡迎回來</h1>
       <p class="subtitle">登入你的帳號繼續學習</p>
 
-      {errorMessage && (
-        <div class="error-message">{errorMessage}</div>
-      )}
-
       <form id="login-form" class="auth-form">
         <div class="form-group">
           <label for="email">電子信箱</label>
@@ -44,18 +40,25 @@ if (Astro.locals.user) {
       </form>
 
       <script>
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const f = e.target;
-          const data = { action: 'login', email: f.email.value, password: f.password.value };
-          const res = await fetch('/api/auth/all', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'same-origin' });
-          const json = await res.json();
-          if (json.ok) {
-            location.href = '/members/dashboard';
-          } else {
-            alert('登入失敗：' + json.error);
-          }
-        });
+        const loginForm = document.getElementById('login-form');
+        if (loginForm) {
+            loginForm.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const f = e.target as HTMLFormElement;
+              const data = { 
+                action: 'login', 
+                email: (f.elements.namedItem('email') as HTMLInputElement).value, 
+                password: (f.elements.namedItem('password') as HTMLInputElement).value 
+              };
+              const res = await fetch('/api/auth/all', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'same-origin' });
+              const json = await res.json();
+              if (json.ok) {
+                location.href = '/members/dashboard';
+              } else {
+                alert('登入失敗：' + json.error);
+              }
+            });
+        }
       </script>
 
       <p class="auth-footer">

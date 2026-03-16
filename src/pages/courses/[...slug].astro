@@ -44,7 +44,7 @@ const seriesItems = isSeries
 
 // ── GROUP items by parent prefix for collapsible chapters ─────
 // Builds structure: { '02': { parent?: item, children: item[] } }
-const chapterGroups: Record<string, { parent?: typeof seriesItems[0]; children: typeof seriesItems[] }> = {};
+const chapterGroups: Record<string, { parent?: typeof seriesItems[0]; children: typeof seriesItems }> = {};
 
 for (const item of seriesItems) {
   if (item.slug === seriesRoot) continue; // skip the root

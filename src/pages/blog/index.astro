@@ -1,8 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import Giscus from '../../components/Giscus.astro';
-import Newsletter from '../../components/Newsletter.astro';
 
 const allPosts = (await getCollection('blog'))
   .filter(p => !p.data.draft && p.id.startsWith('en/'))

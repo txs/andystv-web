@@ -2,10 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const recentPosts = (await getCollection('blog'))
-  .filter(p => !p.data.draft && p.id.startsWith('en/'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 3);
 ---
 
 <BaseLayout title="Andy's Pro — AI & 程式工程師的部落格" lang="zh-tw">
