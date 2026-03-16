@@ -1,0 +1,179 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+if (Astro.locals.user) {
+  return Astro.redirect('/members/dashboard');
+}
+---
+
+<BaseLayout title="註冊 - Andy's Pro">
+  <main class="auth-page">
+    <div class="auth-container">
+      <h1>加入 Andy's Pro</h1>
+      <p class="subtitle">開始你的學習之旅</p>
+
+      {errorMessage && (
+        <div class="error-message">{errorMessage}</div>
+      )}
+
+      {successMessage && (
+        <div class="success-message">{successMessage}</div>
+      )}
+
+      <form id="signup-form" class="auth-form">
+        <div class="form-group">
+          <label for="username">使用者名稱</label>
+          <input type="text" id="username" name="username" required placeholder="andy" />
+        </div>
+
+        <div class="form-group">
+          <label for="email">電子信箱</label>
+          <input type="email" id="email" name="email" required placeholder="your@email.com" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">密碼</label>
+          <input type="password" id="password" name="password" required minlength="8" placeholder="至少 8 個字元" />
+        </div>
+
+        <button type="submit" class="btn-submit">註冊</button>
+      </form>
+
+      <script>
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const f = e.target;
+          const data = {
+            action: 'register',
+            email: f.email.value,
+            username: f.username.value,
+            password: f.password.value,
+          };
+          const res = await fetch('/api/auth/all', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'same-origin' });
+          const json = await res.json();
+          if (json.ok) {
+            alert('註冊成功，請登入');
+            location.href = '/auth/login';
+          } else {
+            alert('Error: ' + json.error);
+          }
+        });
+      </script>
+
+      <p class="auth-footer">
+        已有帳號？<a href="/auth/login">立即登入</a>
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .auth-page {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .auth-container {
+    background: white;
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 2rem;
+  }
+
+  .error-message {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .success-message {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  input {
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #0ea5e9;
+  }
+
+  .btn-submit {
+    background: #0ea5e9;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .btn-submit:hover {
+    background: #0284c7;
+  }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #6b7280;
+  }
+
+  .auth-footer a {
+    color: #0ea5e9;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .auth-footer a:hover {
+    text-decoration: underline;
+  }
+</style>

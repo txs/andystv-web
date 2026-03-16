@@ -1,0 +1,59 @@
+---
+description: 'Lesson: 14-3 setInterval 的用法 clearInterval'
+duration: 14m11s
+level: beginner
+tags:
+- JavaScript
+tier: free
+title: 14-3 setInterval 的用法 clearInterval
+youtubeId: l4B0qN5C8gc
+---
+
+# 14-3 setInterval 的用法 clearInterval
+
+Original: https://course.andys.pro/Javascript-Intro/14-3-usage-of-setinterval-clearinterval/
+
+### 講義
+
+#### 1. `setInterval()` 基本語法
+`setInterval` 與 `setTimeout` 的最大差別在於：它會「每隔一段時間」重複執行一次，直到被手動停止。
+*   **語法**：`setInterval(function, intervalInMilliseconds)`
+*   **應用**：適合用於需要持續更新的場景，如倒數計時器、動畫播放、背景色變換等。
+
+#### 2. 停止循環：`clearInterval()`
+由於 `setInterval` 會無限循環，因此學會如何停止它非常重要。
+*   **步驟**：
+    1.  宣告變數接收 `setInterval` 的回傳編號。
+    2.  呼叫 `clearInterval(編號)` 來停止它。
+*   **範例**：
+    ```javascript
+    var count = 0;
+    var timerId = setInterval(() => {
+        count++;
+        console.log("執行次數：" + count);
+        if (count >= 5) clearInterval(timerId); // 執行五次後停止
+    }, 1000);
+    ```
+
+#### 3. 實戰範例：循環變換背景色 (霓虹燈效果)
+可以利用 **取餘數運算子 (`%`)** 來讓數列不斷循環：
+```javascript
+var colors = ["Red", "Orange", "Yellow", "Green", "Blue"];
+var index = 0;
+setInterval(() => {
+    document.body.style.backgroundColor = colors[index];
+    index = (index + 1) % colors.length; // 讓 index 在 0~4 之間循環
+}, 100);
+```
+
+#### 4. 注意事項：計時精準度
+*   **非絕對精準**：JavaScript 的計時器會受到電腦效能、瀏覽器標籤頁是否在背景跑、以及開發者工具 (Inspect) 是否開啟而影響速度。
+*   **邊界條件**：在設定清除時間時（如設定 3 秒跑一次，10 秒時清除），建議不要把時間切得太剛好，以免因為幾毫秒的誤差導致多跑或少跑一次。
+
+### 影片逐字稿 (AI 生成)
+
+好我們開始來講14-3 SetInterval的用法那前面我們講到SetTimeout的時候呢其實ClearTimeout有時候其實不見得一定會用到因為我們可以SetTimeout它跑完就結束了可是在Interval這個地方呢ClearInterval就很重要囉因為Interval是什麼Interval就是比如說剛剛前面我們SetTimeout是假如是設3秒的話它就是執行一次就結束可是SetInterval會變成是每3秒執行一次Call一次這個FunctionOK那你如果沒有在正確的時候去ClearInterval的話它就會一直不斷的每3秒跑這個程式一直跑只要你的分頁沒有關掉它就是一直在跑SetInterval所以ClearInterval在這邊就還蠻重要好的我們看一下SetInterval的做基本語法跟剛剛SetTimeout非常類似它是一個Function它這邊可以放Function然後這邊放毫秒不斷執行好那這邊也是要加雙引號喔好然後我們現在要來做就是不是很好的Sample Code就是因為等一下我要開一個新的分頁再執行它因為它會在這邊不行好我們去Google在這邊我們先Clear然後我們跑這段Call我們還是跑喔然後就會3秒後Azert Hello好然後OK了然後又3秒喔好OK了喔好有沒有每3秒OK知道嗎就很煩就是有時候你到有些網站它說你中獎了然後請然後可以抽iPhone好知道嗎所以它就是用類似這樣的方法就是會一直來干擾使用者所以你到一些比較不好的網站或是他們就會用這樣的方法那來就是來讓使用者一直關不起來好那所以我們這邊就要用Clear Interval在適當的時機把這個程式去關起來好比如說像這邊這邊我們可以來看我們可以來看它這個Alert Hello會跑幾次呃它會一直Interval嘛會一直跑嘛每3秒跑一次嘛那Clear的話會怎樣會在第10秒的時候執行它然後它就會Stop Hello然後我們來跑一跑看那就是這邊要建議大家要注意一件事情喔就你這邊設3秒然後這邊設10秒對不對10秒就是會停止它然後建議不要就是把時間如果就是你可能這邊是3千然後你這邊就設9千就是有可能9千它可能會有幾毫秒的誤差然後可能它就會多跑一次我們等一下可以試試看就是就你如果把就是因為它可能因為它可能不見得會就是剛好三次那麼多次這樣欸欸 欸 欸 欸喔 反鞋嗎好 這樣可以好 它會跑一次恩它又跑它又跑一次第二次第三次Stop Hello OK對好 那如果我們把它變成是9秒鐘比如說9秒然後它會123123123123123Stop Hello好 大家可以去測試啊看會不會剛好測試到一個很奇怪的狀況是它沒有跑三次它可能只有跑兩次就是不要把邊界條件設的那麼剛好切齊你可以給它加個100毫秒加個300毫秒不要就是好好那這邊這個例子啊就是呃 大家可以試著做做看就是只形容讓呃 背景顏色不斷的變換OK 那你呃 背景顏色不斷的變換的話你是不是有呃 幾種做法啦你如果是用文字的做法的話你可以怎麼做呢你可以先設一個你有一個七彩的顏色然後裡面可能有一些自稱什麼Blue啊什麼紅RedOrange然後這樣子一個數列嘛然後你可以每幾秒的時候你的index會變比如說01 2 3 4 5 6 7然後可能超過7了你就是把它趴7然後又從0開始然後就一直不斷的這樣做循環應該好啦 來做一下好了所以我們要我們用PenCodePen然後我們去要建一個什麼Name建一個H1H1然後This isRainbowColor然後我們要對它做要做背景嘛對不對所以我們要做Document我們先去看我們先去看就是我們先建一個Lat然後這是一個H1等於DocumentQReselector的H1因為我們是直接TagName嘛然後我們Log然後把H1Log出來看一下有沒有抓到Safe有抓到了然後我們先把它試試看就是H1DNStyleDNDNBackBackGroundColor等於Red有有有對不對然後呢我們做什麼事情呢我們有LetRainbow然後然後F4就是沒有我就直接Red好然後好討厭喔我要怎麼我先開那個好了我先開Inspect好了然後說就是說欸他有選到嗎在哪然後顏色有什麼顏色這個關掉Red橙是什麼Orange是不是欸可以Orange然後YellowOrangeYellow然後你們可以用那個景字號然後可以做更仔細啦就是我這邊電的音嗎怎麼講啊不用電Vurple就好了好就只有六色而已好好然後我們這邊有我們這邊有這些然後呢我們要對他做什麼室內我們要我們要setset我們先建一個let然後我們叫他timer等於0然後我們去setinterval然後裡面有一個function然後這個 function長這樣然後他時間是沒幾秒變100100毫秒0.1秒一直變一直變好然後呢在這裡面呢我們要做什麼事情咧我們要把這個h1然後這個等於這個顏色是什麼然後這個等於這個顏色是什麼the rainbow然後他是第幾個第timer對不對timerok然後timer這邊會增加增加然後timertimertimer等於timer增加1然後去爬去取魚數取誰的魚數去rainball的的長度長度這樣有變嗎那你寫錯那我寫錯嗎喔等於sorryok這樣可以嗎ok這樣可以嗎就是轉吧轉吧機材霓虹燈好那我們當然就可以把就是我們現在這邊example嘛我們就可以把它vscore然後我們這邊可以寫一個rainbowcolortimerall the way點html然後我們進它然後我們這裡塞塞h1然後我們這邊塞script tag把我們的code放上去存檔然後我們去把它打開open有沒有這樣就可以了存檔然後我們去把它打開open然後我們去把它打開open有沒有這樣就可以了ok嗎就你每100毫秒0.1秒就改改改改改改一直改這然後你如果用inspect element的話你去看它你可以看到它怎麼樣在對你有看到有沒有自己在改一直動一直動然後你有發現它我剛才你看它現在改很快對不對然後我把我指針放上去它就變滿就是它其實有點就是你在inspect它的時候它效能會掉下來我剛才你現在改很快對不對然後我把我指針放上去它就變滿就是它其實有點就是你在inspect它的時候它效能會掉下來好好我們趕快接接快點好這個好那你看喔它這邊是有stop togglingstop的意思就是代表說你要clear你再點一下它會就是你可能點一下先start然後再點一下再stop就是你可以去設定好這邊有一個問題就是說你的set interval真的是一秒鐘執行一次嗎然後它這邊可以做一件事情是你在開始的時候寄一個時間然後在function裡面再跑一個時間然後兩個時間去想減假如減到了這兩個時間的時間差你可以拿兩個毫秒比如說你可以先拿一個1970年到開始執行這個code的時間和那個set interval裡面再去拿一次時間然後這兩個變數的毫秒數相減是不是就會得到就是得到可能比1000大還比1000小之間就它會有差幾毫秒的變化這樣好這是14-2好好好好好好好好好
+
+### 影片逐字稿largev2
+
+好,我們開始來講14-3 Set Interval 的用法那前面我們講到 Set Timeout 的時候呢其實 Clear Timeout 有時候其實不見得一定會用到因為我們可以 Set Timeout 它跑完就結束了可是在 Interval 這個地方呢Clear Interval 就很重要囉因為 Interval 是什麼?Interval 就是比如說剛剛前面我們 Set Timeout 是假如是設三秒的話,它就是執行一次就結束可是 Set Interval 會變成是每三秒執行一次Call 一次這個 Function那你如果沒有在正確的時候去 Clear Interval 的話它就會一直不斷地每三秒跑,這個程式一直跑只要你的分頁沒有關掉,它就是一直在跑Set Interval所以 Clear Interval 在這邊就還蠻重要的好的,我們看一下 Set Interval 的基本語法跟剛剛 Set Timeout 非常類似它是一個 Function,這邊可以放 Function然後這邊放毫秒不斷執行好,那這邊也是要加雙引號喔好,然後我們現在來做就是不是很好的 Sample Call因為等一下我要開一個新的分頁再執行它因為它會這邊不行,好,我們去 Google在這邊我們先 Clear然後我們跑這段 Call我們開始跑囉然後就會三秒後 Alert Hello好,然後又 OK 了然後又三秒,喔好,OK 了喔好,有沒有,每三秒OK,知道嗎,就很煩就是有時候你到有些網站它說你中獎了然後可以抽 iPhone好,知道嗎所以它就是用類似這樣的方法就是會一直來干擾使用者所以你到一些比較不好的網站或是他們就會用這樣的方法來讓使用者一直關不起來好,所以我們這邊就要用 Clear Interval在適當的時機把這個程式去關起來好,比如說像這邊這邊我們可以來看它這個 Alert Hello 會跑幾次它會一直 Interval 嘛,會一直跑嘛每三秒跑一次嘛那 Clear 的話會怎樣會在第十秒的時候執行它然後它就會 Stop Hello然後我們來跑跑看那就是這邊要建議大家要注意一件事情喔就你這邊設三秒,然後這邊設十秒對不對十秒就是會停止它然後建議不要就是把時間比如說就是你可能這邊是三千然後你這邊就設九千就是有可能九千它可能會有幾毫秒誤差然後可能它就會多跑一次我們等一下可以試試看就是就你如果把就是因為它可能不見得會就是剛好三次那麼多次這樣喔,緩斜嗎好,這樣可以它會跑一次Hello 跑一次第二次第三次Stop Hello OK好,那如果我們把它變成是九秒鐘比如說九秒然後它會一二三一二三一二三Stop Hello好,大家可以去測試啦看會不會剛好測試到一個很奇怪的狀況是它沒有跑三次,它可能只有跑兩次就是不要把邊界條件設得那麼剛好切齊你可以給它加個一百毫秒加個三百毫秒不要就是這我好,那這邊這個例子啊就是大家可以試著做做看就是執行後讓背景顏色不斷的變化OK那你背景顏色不斷的變換的話你是不是有幾種做法啦你如果是用文字的做法的話你可以怎麼做呢你可以先設一個你有一個七彩的顏色然後裡面可能有一些字像是什麼Blue啊什麼RedOrange然後這樣子一個數列嘛然後你可以每幾秒的時候你的Index會變比如說0、1、2、3、4、5、6、7然後可能超過7了你就是把它趴7然後又從0開始然後就一直不斷的這樣做循環應該好啦,來做一下好了所以我們要我們用PenCall Pen然後我們去要建一個什麼Name建一個H1H1This is rainbow color然後我們要對它做要做背景嘛,對不對所以我們要做Document我們先去看就是我們先建一個Let然後這是一個H1等於Document.CurieSelector的H1因為我們是直接TagName嘛然後我們Log然後把H1Log出來看一下有沒有抓到SaveCancel有!抓到了然後我們先把它試試看H1.Style.BackgroundColor等於Red有!有!對不對然後呢我們做什麼事情呢我們有Let rainbow然後然後咧欸不是,這是白怎麼樣,我就直接Red好了然後好討厭喔,我要怎麼我先開那個好了我先開Inspect好了然後它有選到嗎看到了喔好然後顏色有什麼顏色這個關掉Red橙是什麼Orange是不是欸可以喔Orange然後YellowOrangeYellow當然你們可以用那個井字號然後可以做得更仔細啦就是我這邊電的硬話怎麼講啊不用電啦Virtual就好了就只有六色而已好,然後我們這邊有我們這邊有這些然後呢我們要對它做什麼事呢我們要Set我們先建一個Let然後我們叫它Timer等於零然後我們去Set interval然後裡面有一個Function然後這個Function長這樣然後它時間是每幾秒變100毫秒0.1秒一直變一直變然後呢在這裡面呢我們要做什麼事情呢我們要把這個H1然後這個等於這顏色是什麼是Rainbow然後它是第幾個第Timer個對不對喔TimerOK然後Timer這邊會++然後TimerTimer等於Timer加1然後去爬去取余數取誰的余數Rainbow的長度這樣有變嗎哪裡寫錯這樣寫錯嗎喔等於Sorry喔OK這樣可以嗎就是轉吧轉吧七彩霓虹燈好那我們當然就可以把就是我們現在這邊Example嘛我們就可以把它怎樣VS Code那我們這邊可以寫一個Rainbow ColorAll the way.html然後我們進它然後我們這裡塞塞H1然後我們這邊塞Script Tag然後我們Script Tag裡面把我們的Code放上去存檔然後我們去把它打開Open有沒有這樣就可以了OK嗎就你每100毫秒0.1秒就改改改一直改色然後你如果用Inspect Element的話你去看它你可以看到它怎麼樣在對你有看到有沒有自己在改一直動一直動然後你有發現它我剛才你看它現在改很快對不對然後我把我指針放上去它又變慢就是它其實有點就你在Inspect它的時候它其實效能會掉下來好然後我們趕快接快點快點好這個好那你看喔它這邊是有Stop TogglingStop的意思就代表說你要clear你再點一下它會就是你可能點一下先Start然後再點一下再Stop就是你可以去設定好這邊有問一個問題就是說你的SetInterval真的是一秒鐘執行一次嗎然後它這邊可以做一件事情是你在開始的時候記一個時間然後在Function裡面再跑一個時間然後兩個時間去相減假如減到了兩個這兩個時間的時間差你可以拿兩個毫秒嗎比如說你可以先拿一個1970年到開始執行這個code的時間和那個SetInterval裡面再去拿一次時間然後這兩個變數的毫秒數相減是不是就會得到就是得到可能比一千大還比一千小之間就它會有差幾毫秒的變化好這是14-2

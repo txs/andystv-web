@@ -1,0 +1,221 @@
+---
+export const prerender = false; // SSR 模式
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// 檢查是否登入
+if (!Astro.locals.user) {
+  return Astro.redirect('/auth/login');
+}
+
+const user = Astro.locals.user;
+
+// TODO: 從資料庫獲取用戶訂閱狀態
+const subscription = {
+  plan: 'free', // 'free' | 'pro' | 'premium'
+  status: 'active',
+};
+---
+
+<BaseLayout title="會員中心 - Andy's Pro">
+  <main class="dashboard">
+    <div class="container">
+      <div class="welcome-section">
+        <h1>歡迎回來，{user.username}！</h1>
+        <p>你目前的方案：<strong class="plan-badge">{subscription.plan.toUpperCase()}</strong></p>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- 個人資料卡片 -->
+        <div class="card">
+          <h2>📋 個人資料</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">使用者名稱</span>
+              <span class="value">{user.username}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">電子信箱</span>
+              <span class="value">{user.email}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">會員等級</span>
+              <span class="value">{subscription.plan}</span>
+            </div>
+          </div>
+          <a href="/members/settings" class="btn-secondary">編輯資料</a>
+        </div>
+
+        <!-- 學習進度 -->
+        <div class="card">
+          <h2>📚 學習進度</h2>
+          <p class="placeholder">功能開發中...</p>
+          <ul class="progress-list">
+            <li>React 基礎入門 - 進度 45%</li>
+            <li>Next.js 實戰 - 尚未開始</li>
+          </ul>
+        </div>
+
+        <!-- 升級方案 -->
+        {subscription.plan === 'free' && (
+          <div class="card upgrade-card">
+            <h2>🚀 解鎖更多功能</h2>
+            <p>升級到 Pro 或 Premium 以獲得：</p>
+            <ul class="benefits">
+              <li>✅ 完整課程影片</li>
+              <li>✅ 範例程式碼</li>
+              <li>✅ 專屬社群</li>
+              <li>✅ 優先支援</li>
+            </ul>
+            <a href="/pricing" class="btn-primary">查看方案</a>
+          </div>
+        )}
+
+        <!-- 我的課程 -->
+        <div class="card">
+          <h2>🎓 我的課程</h2>
+          <p class="placeholder">你還沒有報名任何課程</p>
+          <a href="/courses" class="btn-secondary">瀏覽課程</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .dashboard {
+    padding: 4rem 0;
+    min-height: calc(100vh - 200px);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .welcome-section {
+    margin-bottom: 3rem;
+  }
+
+  .welcome-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .plan-badge {
+    background: #0ea5e9;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0.5rem;
+  }
+
+  .label {
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  .value {
+    color: #1f2937;
+  }
+
+  .placeholder {
+    color: #9ca3af;
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+
+  .progress-list {
+    list-style: none;
+    margin: 1rem 0;
+  }
+
+  .progress-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .upgrade-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .upgrade-card h2 {
+    color: white;
+  }
+
+  .benefits {
+    list-style: none;
+    margin: 1.5rem 0;
+  }
+
+  .benefits li {
+    padding: 0.5rem 0;
+  }
+
+  .btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .btn-primary {
+    background: white;
+    color: #667eea;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-secondary {
+    background: #0ea5e9;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: #0284c7;
+  }
+
+  .upgrade-card .btn-primary:hover {
+    background: #f0f9ff;
+  }
+</style>

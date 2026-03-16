@@ -1,0 +1,35 @@
+{
+  "name": "andystv-web",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/tailwind": "^6.0.2",
+    "@libsql/client": "^0.10.0",
+    "astro": "^5.17.1",
+    "better-auth": "^1.4.18",
+    "cheerio": "^1.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "stripe": "^17.4.0",
+    "tailwindcss": "^3.4.17",
+    "turndown": "^7.2.2",
+    "typescript": "^5.7.2",
+    "youtube-transcript": "^1.2.1",
+    "youtube-transcript-api": "^3.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5"
+  }
+}

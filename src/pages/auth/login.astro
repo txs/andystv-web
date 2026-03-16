@@ -1,0 +1,168 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// 如果已登入，重定向
+if (Astro.locals.user) {
+  return Astro.redirect('/members/dashboard');
+}
+---
+
+<BaseLayout title="登入 - Andy's Pro">
+  <main class="auth-page">
+    <div class="auth-container">
+      <h1>歡迎回來</h1>
+      <p class="subtitle">登入你的帳號繼續學習</p>
+
+      {errorMessage && (
+        <div class="error-message">{errorMessage}</div>
+      )}
+
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="email">電子信箱</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="your@email.com"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">密碼</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="••••••••"
+          />
+        </div>
+
+        <button type="submit" class="btn-submit">登入</button>
+      </form>
+
+      <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const f = e.target;
+          const data = { action: 'login', email: f.email.value, password: f.password.value };
+          const res = await fetch('/api/auth/all', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), credentials: 'same-origin' });
+          const json = await res.json();
+          if (json.ok) {
+            location.href = '/members/dashboard';
+          } else {
+            alert('登入失敗：' + json.error);
+          }
+        });
+      </script>
+
+      <p class="auth-footer">
+        還沒有帳號？<a href="/auth/signup">立即註冊</a>
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .auth-page {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .auth-container {
+    background: white;
+    padding: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 2rem;
+  }
+
+  .error-message {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-weight: 600;
+    color: #374151;
+  }
+
+  input {
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: #0ea5e9;
+  }
+
+  .btn-submit {
+    background: #0ea5e9;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .btn-submit:hover {
+    background: #0284c7;
+  }
+
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #6b7280;
+  }
+
+  .auth-footer a {
+    color: #0ea5e9;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .auth-footer a:hover {
+    text-decoration: underline;
+  }
+</style>

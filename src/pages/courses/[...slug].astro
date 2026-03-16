@@ -1,0 +1,715 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, getEntry } from 'astro:content';
+import Giscus from '../../components/Giscus.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import Quiz from '../../components/Quiz.astro';
+
+export async function getStaticPaths() {
+  const courses = await getCollection('courses');
+  return courses.map(c => ({
+    params: { slug: c.slug },
+    props: { courseSlug: c.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+if (!slug) return Astro.redirect('/404');
+
+const course = await getEntry('courses', slug);
+if (!course) return Astro.redirect('/404');
+
+const { Content } = await course.render();
+
+// ── Determine series root ──────────────────────────────────────
+const allCourses = await getCollection('courses');
+const currentSlug = course.slug;
+const pathSegments = currentSlug.split('/');
+const isChild = pathSegments.length > 1;
+const hasChildren = allCourses.some(c => c.slug.startsWith(currentSlug + '/'));
+const isSeries = isChild || hasChildren;
+const seriesRoot = isChild ? pathSegments[0] : currentSlug;
+
+// ── Get all series items ───────────────────────────────────────
+const seriesItems = isSeries
+  ? allCourses
+      .filter(c => c.slug === seriesRoot || c.slug.startsWith(seriesRoot + '/'))
+      .sort((a, b) => {
+        if (a.slug === seriesRoot) return -1;
+        if (b.slug === seriesRoot) return 1;
+        return a.slug.localeCompare(b.slug);
+      })
+  : [];
+
+// ── GROUP items by parent prefix for collapsible chapters ─────
+// Builds structure: { '02': { parent?: item, children: item[] } }
+const chapterGroups: Record<string, { parent?: typeof seriesItems[0]; children: typeof seriesItems[] }> = {};
+
+for (const item of seriesItems) {
+  if (item.slug === seriesRoot) continue; // skip the root
+  const seg = item.slug.replace(seriesRoot + '/', '');
+  const parts = seg.split('-');
+  // match numeric prefix like "02" or "02-1"
+  const chapterNum = parts[0]; // e.g. "02"
+  const isLesson = seg.match(/^\d+-\d+/); // "02-1-..." pattern
+
+  if (!isLesson) {
+    // This is a chapter overview page (e.g., 02-variables...)
+    if (!chapterGroups[chapterNum]) chapterGroups[chapterNum] = { children: [] };
+    chapterGroups[chapterNum].parent = item;
+  } else {
+    // This is a lesson (e.g., 02-1-...)
+    const lessonChapterNum = parts[0]; // "02"
+    if (!chapterGroups[lessonChapterNum]) chapterGroups[lessonChapterNum] = { children: [] };
+    chapterGroups[lessonChapterNum].children.push(item);
+  }
+}
+
+const sortedChapterKeys = Object.keys(chapterGroups).sort();
+
+// ── Prev / Next navigation ─────────────────────────────────────
+const allLessons = seriesItems.filter(c => c.slug !== seriesRoot);
+const currentIndex = allLessons.findIndex(c => c.slug === currentSlug);
+const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
+const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
+
+// ── Helpers ────────────────────────────────────────────────────
+const levelLabels: Record<string, string> = {
+  beginner: '初級', intermediate: '中級', advanced: '進階',
+};
+const tierLabels: Record<string, { label: string; color: string }> = {
+  free: { label: '免費', color: 'emerald' },
+  pro: { label: 'Pro', color: 'violet' },
+  premium: { label: 'Premium', color: 'amber' },
+};
+const tier = tierLabels[course.data.tier] ?? tierLabels.free;
+
+// Current chapter context banner
+const currentChapterNum = isChild
+  ? pathSegments[1]?.split('-')[0]
+  : null;
+const currentChapterGroup = currentChapterNum ? chapterGroups[currentChapterNum] : null;
+---
+
+<BaseLayout title={`${course.data.title} — Andy's Pro`} description={course.data.description}>
+  <!-- Reading progress bar -->
+  <div class="reading-bar" id="reading-bar"></div>
+
+  <div class="course-shell">
+    <!-- ===== SIDEBAR ===== -->
+    {isSeries && (
+      <aside class="course-sidebar">
+        <div class="sidebar-top">
+          <a href="/courses" class="back-courses">← 全部課程</a>
+          <div class="series-title">📚 課程目錄</div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="課程章節">
+          {/* Root / overview link */}
+          <a href={`/courses/${seriesRoot}`}
+             class={`nav-item overview ${currentSlug === seriesRoot ? 'active' : ''}`}>
+            <span class="nav-icon">🏠</span>
+            <span>課程介紹</span>
+          </a>
+
+          {sortedChapterKeys.map(chapterKey => {
+            const group = chapterGroups[chapterKey];
+            const isCurrentChapter = currentChapterNum === chapterKey;
+            const hasParent = !!group.parent;
+
+            return (
+              <div class={`chapter-group ${isCurrentChapter ? 'open' : ''}`}>
+                {/* Chapter header */}
+                {hasParent ? (
+                  <a href={`/courses/${group.parent!.slug}`}
+                     class={`nav-item chapter-header ${currentSlug === group.parent!.slug ? 'active' : ''}`}>
+                    <span class="chapter-num">Ch {chapterKey}</span>
+                    <span class="chapter-title-text">{group.parent!.data.title.replace(/^\d+-\s*/, '').split('：')[0]}</span>
+                    {isCurrentChapter && <span class="chapter-arrow">↓</span>}
+                  </a>
+                ) : (
+                  <div class="nav-item chapter-header no-link">
+                    <span class="chapter-num">Ch {chapterKey}</span>
+                    <span class="chapter-title-text">Chapter {chapterKey}</span>
+                  </div>
+                )}
+
+                {/* Lessons (always show if in current chapter, else collapsed) */}
+                <div class={`lesson-list ${isCurrentChapter ? 'expanded' : 'collapsed'}`}>
+                  {group.children.map((lesson, i) => (
+                    <a href={`/courses/${lesson.slug}`}
+                       class={`nav-item lesson ${currentSlug === lesson.slug ? 'active' : ''}`}>
+                      <span class="lesson-num">{i + 1}</span>
+                      <span class="lesson-title">{lesson.data.title.replace(/^\d+-\d+\s*/, '')}</span>
+                      <span class={`lesson-tier tier-${lesson.data.tier}`}>
+                        {lesson.data.tier === 'free' ? '🆓' : '🔒'}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </nav>
+      </aside>
+    )}
+
+    <!-- ===== MAIN ===== -->
+    <main class={`course-main ${isSeries ? 'with-sidebar' : ''}`}>
+      <!-- Course hero header -->
+      <header class="course-header">
+        {!isSeries && <a href="/courses" class="back-courses">← 全部課程</a>}
+
+        <div class="course-badges">
+          <span class="badge badge-level">{levelLabels[course.data.level]}</span>
+          <span class={`badge badge-tier tier-bg-${course.data.tier}`}>{tier.label}</span>
+          {course.data.duration && <span class="badge badge-duration">⏱ {course.data.duration}</span>}
+        </div>
+
+        <h1>{course.data.title}</h1>
+        <p class="course-desc">{course.data.description}</p>
+
+        {course.data.tags.length > 0 && (
+          <div class="course-tags">
+            {course.data.tags.map((tag: string) => <span class="ctag">{tag}</span>)}
+          </div>
+        )}
+      </header>
+
+      <!-- Course content (parent reveals child lessons; children have prose) -->
+      {hasChildren ? (
+        <section class="chapter-overview">
+          <Content />
+
+          <h2 class="lessons-heading">📋 本章節課程</h2>
+          <div class="lessons-grid">
+            {allCourses
+              .filter(c => c.slug.startsWith(currentSlug + '/') && !c.slug.replace(currentSlug + '/', '').includes('/'))
+              .sort((a, b) => a.slug.localeCompare(b.slug))
+              .map((lesson, i) => (
+                <a href={`/courses/${lesson.slug}`} class={`tech-card lesson-card tier-card-${lesson.data.tier}`}>
+                  <div class="lc-num">{String(i + 1).padStart(2, '0')}</div>
+                  <div class="lc-body">
+                    <h3>{lesson.data.title}</h3>
+                    <p>{lesson.data.description}</p>
+                  </div>
+                  <div class="lc-meta">
+                    <span class={`lc-tier tier-bg-${lesson.data.tier}`}>
+                      {lesson.data.tier === 'free' ? '🆓 免費' : `🔒 ${tierLabels[lesson.data.tier]?.label}`}
+                    </span>
+                    {lesson.data.duration && <span class="lc-dur">⏱ {lesson.data.duration}</span>}
+                  </div>
+                </a>
+              ))
+            }
+          </div>
+        </section>
+      ) : (
+        <div class="prose-wrap">
+          <div class="prose">
+            <Content />
+          </div>
+          {course.data.quiz && course.data.quiz.length > 0 && (
+            <Quiz questions={course.data.quiz} />
+          )}
+        </div>
+      )}
+
+      <!-- Prev / Next navigation -->
+      {isSeries && (prevLesson || nextLesson) && (
+        <nav class="lesson-nav" aria-label="前後課程">
+          <div class="lesson-nav-inner">
+            {prevLesson ? (
+              <a href={`/courses/${prevLesson.slug}`} class="lesson-nav-btn prev">
+                <span class="nav-dir">← 上一節</span>
+                <span class="nav-title">{prevLesson.data.title.replace(/^\d+-\d+\s*/, '')}</span>
+              </a>
+            ) : <div />}
+            {nextLesson ? (
+              <a href={`/courses/${nextLesson.slug}`} class="lesson-nav-btn next">
+                <span class="nav-dir">下一節 →</span>
+                <span class="nav-title">{nextLesson.data.title.replace(/^\d+-\d+\s*/, '')}</span>
+              </a>
+            ) : <div />}
+          </div>
+        </nav>
+      )}
+
+      <!-- Newsletter + Comments -->
+      <div class="bottom-components">
+        <Newsletter />
+        <Giscus />
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Reading bar */
+  .reading-bar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--gradient-brand);
+    z-index: 101;
+    transition: width 0.1s;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* ===== LAYOUT ===== */
+  .course-shell {
+    display: flex;
+    min-height: calc(100vh - 64px);
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .course-sidebar {
+    width: 288px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border-subtle);
+    height: calc(100vh - 64px);
+    position: sticky;
+    top: 64px;
+    overflow-y: auto;
+    background: var(--bg-base);
+    display: flex;
+    flex-direction: column;
+
+    /* hide scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+
+  .course-sidebar::-webkit-scrollbar { width: 4px; }
+  .course-sidebar::-webkit-scrollbar-track { background: transparent; }
+  .course-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .sidebar-top {
+    padding: 1.25rem 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    background: var(--bg-base);
+    backdrop-filter: blur(12px);
+    z-index: 2;
+  }
+
+  .back-courses {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    margin-left: -0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .back-courses:hover { 
+    color: var(--text-primary);
+    background: var(--bg-glass-hover);
+  }
+
+  .back-arrow {
+    transition: transform 0.2s;
+  }
+  .back-courses:hover .back-arrow {
+    transform: translateX(-3px);
+  }
+
+  .series-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Nav items ── */
+  .sidebar-nav {
+    padding: 0.75rem 0.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: 1px solid transparent;
+    width: 100%;
+  }
+
+  .nav-item:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface-hover);
+  }
+
+  .nav-item.active {
+    color: var(--accent-violet);
+    background: rgba(139, 92, 246, 0.12);
+    border-color: rgba(139, 92, 246, 0.25);
+    font-weight: 600;
+  }
+
+  .nav-item.overview {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .nav-icon { font-size: 1rem; flex-shrink: 0; }
+
+  /* ── Chapter groups ── */
+  .chapter-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2px;
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+  }
+
+  .chapter-header.no-link { background: var(--bg-surface); cursor: default; opacity: 0.6; }
+
+  .chapter-num {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--accent-violet);
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 4px;
+    padding: 0.1rem 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .chapter-title-text {
+    flex: 1;
+    font-size: 0.82rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chapter-arrow {
+    font-size: 0.75rem;
+    color: var(--accent-violet);
+    flex-shrink: 0;
+  }
+
+  /* ── Lessons ── */
+  .lesson-list {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: max-height 0.3s var(--ease-out), opacity 0.3s;
+  }
+
+  .lesson-list.expanded { max-height: 1000px; opacity: 1; }
+  .lesson-list.collapsed { max-height: 0; opacity: 0; }
+
+  .nav-item.lesson {
+    padding-left: 1.25rem;
+    font-size: 0.8rem;
+    border-left: 2px solid transparent;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .nav-item.lesson:hover { border-left-color: rgba(139,92,246,0.4); }
+  .nav-item.lesson.active { border-left-color: var(--accent-violet); }
+
+  .lesson-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    min-width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .lesson-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lesson-tier { font-size: 0.8rem; flex-shrink: 0; }
+  .tier-free { color: var(--accent-emerald); }
+  .tier-pro, .tier-premium { color: var(--text-tertiary); }
+
+  /* ===== MAIN CONTENT ===== */
+  .course-main {
+    flex: 1;
+    min-width: 0;
+    padding: 2rem 2rem 4rem;
+    max-width: 900px;
+  }
+
+  .course-main.with-sidebar {
+    padding-left: 2.5rem;
+  }
+
+  .course-header {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .course-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: 7px;
+  }
+
+  .badge-level { background: var(--bg-surface); color: var(--text-tertiary); }
+  .badge-duration { background: var(--bg-surface); color: var(--text-tertiary); }
+
+  .tier-bg-free { background: rgba(16, 185, 129, 0.12); color: var(--accent-emerald); border: 1px solid rgba(16,185,129,0.2); }
+  .tier-bg-pro { background: rgba(139, 92, 246, 0.12); color: var(--accent-violet); border: 1px solid rgba(139,92,246,0.2); }
+  .tier-bg-premium { background: rgba(245, 158, 11, 0.12); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.2); }
+
+  .course-header h1 {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    line-height: 1.25;
+    margin-bottom: 0.75rem;
+  }
+
+  .course-desc {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .course-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .ctag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent-cyan);
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.2);
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+  }
+
+  /* ===== CHAPTER OVERVIEW — lesson grid ===== */
+  .chapter-overview { }
+
+  .lessons-heading {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 2.5rem 0 1.25rem;
+  }
+
+  .lessons-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .lesson-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+    text-decoration: none;
+  }
+
+  .lc-num {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-tertiary);
+    line-height: 1;
+    min-width: 36px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lc-body { flex: 1; min-width: 0; }
+  .lc-body h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+  }
+  .lc-body p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .lc-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .lc-tier {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+  }
+
+  .lc-dur {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+  }
+
+  /* ===== PROSE ===== */
+  .prose-wrap {
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* ===== PREV / NEXT navigation ===== */
+  .lesson-nav {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .lesson-nav-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .lesson-nav-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.25s var(--ease-out);
+  }
+
+  .lesson-nav-btn:hover {
+    background: var(--bg-glass-hover);
+    border-color: rgba(139,92,246,0.3);
+    transform: translateY(-1px);
+  }
+
+  .lesson-nav-btn.next { text-align: right; }
+
+  .nav-dir {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-violet);
+  }
+
+  .nav-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  /* ===== BOTTOM ===== */
+  .bottom-components {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1024px) {
+    .course-shell { flex-direction: column; }
+    .course-sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+      top: 0;
+      border-right: none;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .lesson-list.collapsed { max-height: 0; }
+    .course-main { padding: 1.5rem; max-width: 100%; }
+    .course-main.with-sidebar { padding-left: 1.5rem; }
+    .lesson-nav-inner { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .lesson-card { flex-wrap: wrap; }
+    .lc-meta { flex-direction: row; align-items: center; width: 100%; }
+  }
+</style>
+
+<script>
+  // Reading progress
+  const bar = document.getElementById('reading-bar');
+  window.addEventListener('scroll', () => {
+    const docH = document.body.scrollHeight - window.innerHeight;
+    if (bar) bar.style.width = `${docH > 0 ? (window.scrollY / docH) * 100 : 0}%`;
+  });
+
+  // Toggle collapsed chapters on click (mobile-friendly)
+  const chapterHeaders = document.querySelectorAll('.chapter-header:not(.no-link)');
+  chapterHeaders.forEach(header => {
+    header.addEventListener('click', (e) => {
+      const group = header.closest('.chapter-group');
+      if (!group) return;
+      const list = group.querySelector('.lesson-list');
+      if (!list) return;
+      // Only toggle if clicking a non-active header
+      if (list.classList.contains('collapsed')) {
+        list.classList.remove('collapsed');
+        list.classList.add('expanded');
+      } else if (!group.querySelector('.active')) {
+        list.classList.remove('expanded');
+        list.classList.add('collapsed');
+      }
+    });
+  });
+</script>

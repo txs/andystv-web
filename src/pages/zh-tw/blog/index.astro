@@ -1,0 +1,210 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import Giscus from '../../../components/Giscus.astro';
+import Newsletter from '../../../components/Newsletter.astro';
+
+const allPosts = (await getCollection('blog'))
+  .filter(p => !p.data.draft && p.id.startsWith('zh-tw/'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const allTags = [...new Set(allPosts.flatMap(p => p.data.tags))];
+---
+
+<BaseLayout title="Blog — Andy's Pro" description="AI、JavaScript 和現代工程的技術文章">
+  <div class="blog-page">
+    <div class="section-container">
+      <header class="page-hero">
+        <span class="section-label">技術文章</span>
+        <h1>部落格</h1>
+        <p>分享 AI 工具、程式實戰心得與業界觀點</p>
+      </header>
+
+      <!-- Tag filter -->
+      {allTags.length > 0 && (
+        <div class="tags-filter" id="tags-filter">
+          <button class="tag-pill active" data-tag="all">全部</button>
+          {allTags.map(tag => (
+            <button class="tag-pill" data-tag={tag}>{tag}</button>
+          ))}
+        </div>
+      )}
+
+      <!-- Posts grid -->
+      {allPosts.length > 0 ? (
+        <div class="posts-grid" id="posts-grid">
+          {allPosts.map(post => (
+            <a href={`/zh-tw/blog/${post.slug.replace('zh-tw/', '')}`}
+               class="tech-card post-card"
+               data-tags={post.data.tags.join(',')}>
+              <div class="card-tags">
+                {post.data.tags.slice(0, 3).map((tag: string) => (
+                  <span class="card-tag">{tag}</span>
+                ))}
+              </div>
+              <h2 class="card-title">{post.data.title}</h2>
+              <p class="card-excerpt">{post.data.description}</p>
+              <div class="card-meta">
+                <time>{new Date(post.data.pubDate).toLocaleDateString('zh-TW', {
+                  year: 'numeric', month: 'short', day: 'numeric'
+                })}</time>
+                <span class="read-more">閱讀 →</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="empty-state">
+          <div class="empty-icon">✍️</div>
+          <h3>文章即將上線</h3>
+          <p>訂閱電子報，第一時間收到通知！</p>
+        </div>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .blog-page {
+    padding: 4rem 0 6rem;
+  }
+
+  .page-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+  }
+
+  .page-hero p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+
+  .tags-filter {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+
+  .tag-pill {
+    padding: 0.4rem 1rem;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 9999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .tag-pill:hover {
+    color: var(--text-primary);
+    background: var(--bg-glass-hover);
+  }
+
+  .tag-pill.active {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.4);
+    color: var(--accent-violet);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .post-card {
+    padding: 1.5rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .card-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .card-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    padding: 0.15rem 0.6rem;
+    border-radius: 6px;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .card-excerpt {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    flex: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .read-more { color: var(--accent-violet); font-weight: 600; }
+
+  .empty-state {
+    text-align: center;
+    padding: 5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .empty-icon { font-size: 3rem; }
+  .empty-state h3 { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+  .empty-state p { color: var(--text-secondary); }
+</style>
+
+<script>
+  const tagBtns = document.querySelectorAll<HTMLButtonElement>('.tag-pill');
+  const cards = document.querySelectorAll<HTMLAnchorElement>('.post-card');
+
+  tagBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tagBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const selected = btn.dataset.tag;
+      cards.forEach(card => {
+        if (selected === 'all') {
+          card.style.display = '';
+        } else {
+          const tags = card.dataset.tags?.split(',') ?? [];
+          card.style.display = tags.some(t => t.trim() === selected) ? '' : 'none';
+        }
+      });
+    });
+  });
+</script>

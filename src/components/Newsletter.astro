@@ -1,0 +1,73 @@
+---
+---
+<div class="newsletter-wrapper">
+  <h3>🎯 訂閱電子報與 YouTube 頻道</h3>
+  <p>掌握最新得 JavaScript 技術與免費教學，別錯過每週的技術交流！</p>
+  
+  <div class="subscription-actions">
+    <a href="https://youtube.com/@AndysTV" target="_blank" rel="noopener noreferrer" class="btn-youtube">
+      ▶️ 訂閱 YouTube 頻道
+    </a>
+    <a href="https://buttondown.email/YOUR_ACCOUNT" target="_blank" rel="noopener noreferrer" class="btn-newsletter">
+      ✉️ 訂閱免費技術報
+    </a>
+  </div>
+</div>
+
+<style>
+  .newsletter-wrapper {
+    margin-top: 2rem;
+    padding: 3rem 2rem;
+    background: var(--bg-surface);
+    border-radius: 12px;
+    border: 1px solid var(--border-glass);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+
+  .newsletter-wrapper h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.35rem;
+    color: var(--text-primary);
+  }
+
+  .newsletter-wrapper p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .subscription-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-youtube, .btn-newsletter {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-youtube {
+    background: #ef4444;
+    color: white;
+  }
+
+  .btn-youtube:hover {
+    background: #dc2626;
+  }
+
+  .btn-newsletter {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn-newsletter:hover {
+    background: #2563eb;
+  }
+</style>

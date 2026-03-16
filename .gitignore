@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.astro/
+
+# Environment and secrets
+.env
+.env.local
+*cookies.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Media and logs
+*.mp3
+*.mp4
+*.part
+*.log
+
+# Temporary and debug files
+temp_*
+debug_*
+debug_data.json
+debug_lesson.html
+temp_lesson.html
+
+# Business Strategy & Internal Docs
+docs/private/

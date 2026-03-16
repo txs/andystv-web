@@ -1,0 +1,49 @@
+---
+description: 'Lesson: 18-2 Ajax Demo 範例程式: XMLHttpRequest'
+duration: 6m46s
+level: beginner
+tags:
+- JavaScript
+tier: free
+title: '18-2 Ajax Demo 範例程式: XMLHttpRequest'
+youtubeId: kO4EBQrdnuI
+---
+
+# 18-2 Ajax Demo 範例程式: XMLHttpRequest
+
+Original: https://course.andys.pro/Javascript-Intro/18-2-ajax-demo-sample-program-xmlhttprequest/
+
+### 講義
+
+#### 1. 範例目標：不重整網頁更新內容
+本範例示範如何點擊按鈕後，透過 **XMLHttpRequest (XHR)** 物件向伺服器請求一份簡單的 HTML 檔案，並將其內容動態顯示在頁面上。
+
+#### 2. 核心實作步驟
+1.  **建立 XHR 物件**：
+    `var xhttp = new XMLHttpRequest();`
+2.  **定義監聽函式 (`onreadystatechange`)**：
+    *   這是 Ajax 最重要的部分。它是一個 Method，當請求的「狀態」改變時會自動執行。
+    *   **成功判斷條件**：
+        - `readyState == 4`：代表請求已完成。
+        - `status == 200`：代表伺服器回應成功 (OK)，不是 404 找不到網頁。
+3.  **更新 DOM**：
+    *   使用 `xhttp.responseText` 取得伺服器傳回的文字內容。
+    *   利用 `document.getElementById('demo').innerHTML = xhttp.responseText;` 將內容塞入指定的網頁區塊。
+4.  **發送請求**：
+    *   `xhttp.open("GET", "URL", true)`：設定請求方法與目的地。
+    *   `xhttp.send()`：正式把請求送出去。
+
+#### 3. 關於 Local Host 與 Live Server
+*   在練習 Ajax 時，通常需要一個簡單的伺服器環境。
+*   範例中使用 VS Code 的 **Live Server** 插件，它會建立一個本機伺服器 (`127.0.0.1` 或 `localhost`)，讓我們可以模擬從 Server 抓取資料的過程。
+
+#### 4. 小結
+雖然這只是一個顯示文字的小功能，但它涵蓋了 Gmail 或 Facebook 這種大型產品的核心原理：**發送請求 -> 等待回傳 -> 局部更新**。理解了 readyState 與 responseText 的關係，你就掌握了 Ajax 的實作精髓。
+
+### 影片逐字稿 (AI 生成)
+
+哈囉大家 我這邊要來做一下就是一個Agex的demo18-2的Agex Demo好 那這個我們先首先來看一下這個GIF它可以做到的事情是我點一下然後它就會跑出它頁面都沒有重整喔然後它就會在上面的title也變了然後內容也變了好的 我們先來看一下Agex這個HTML那因為我現在這邊有裝了一個插件它叫做Live Server所以我們先來看一下這份Code好 那Body裡面呢它就是有這樣子Change Content有一個Button好 然後它Unclick 是不是會Load Duck大家可以理解嗎就是當我有一個按鈕我們這邊先這邊我先把它改成白色好我裝黑底的保護眼珠好 那這邊我們有一個XML HTTP Request這個HTML長這樣OK 它長這樣然後呢這邊是不是有一個按鈕然後這個按鈕我們前面有叫到Unclick對不對會去跑JavaScript裡面這個Function好 這個Function我們首先先建了一個XML HTTP Request好 然後這邊呢這個東西如果Unready state change那會做什麼事情呢會做的事情是如果它的Ready state是4然後它有收到叫做200Status 200這個Document的GetElementById去做到這個Demo然後把它的InnerHTMLInnerHTML是不是這個ID這個Div這個DOM對不對DOM裡面是它的內文InnerHTML這是它的Inner的裡面的HTML這個DOM裡面的HTML好 那我把這個裡面的HTML直接改成我從Server上面收到的Response Text我拿到的東西就這個裡面它有一個Response Text大家不要緊張也不用現在就是抄這一份Call我會給大家好 那我先把這個Unready state change我們先把它看成是一個它這裡面的一個屬性就是或是因為它是它的指項目嘛它是一個Function所以它是一個Method對不對還記得前面講的它是一個Method然後我們先設定這個Function可能它也不會跑可是它是在Ready state改變的時候它才會執行這裡好的 那我們用它去開Get我們要去Get什麼東西呢原本這份DEMO的Code它是Local Host然後直接Slash Test來找這邊那因為我這邊用Live Server我這邊OpenLive ServerLive Server它這邊就會幫我做的事情是它會幫我到127.剛剛這邊127.0.0.127.0.0.1那號50005000是Port然後這邊是它的資料夾的位置好那因為127.0.0.1這個位置其實就是你使用者的就是你自己本機的Local Host所以我自己可以把前面這邊把它改成Local Host它是一樣的那就是我所以我剛才改成這樣然後我把因為這是它的Port就是它是第幾個Port它是第5500這個號碼的Port好那所以我要抓這個Agex那它底下這邊有一個Test的HTML所以我把網址連結就變HTTPLocal Host500018Demo Test這邊然後True好的我去開這個東西以後呢是我開了以後它會StateChange那StateChange那StateChange可能會有Status它可能ReadyState有0123那我們不管它中間發生什麼事我們只要就是ReadyState是4的時候就代表它Ready然後它的Status是200代表收到不是404那這兩個條件都吻合的情況下然後就代表說我們的Response Tax已經好了然後把它放進去好那這時候我們就做就是它就會做這件事情然後這邊open完了以後呢我們把它send好就是這份call再大概解釋一下這份call在幹嘛好做了以後呢那是不是我們就來看這份call跑起來是怎樣就是按這邊它會去執行這個loadDoc好那我們點一下哇它就做了這麼它就直接把拿到Response Text直接畫上去它畫上去就是你看喔大家記得喔就是因為我們是直接在demo的innerHTML所以它裡面的內容是改的可是它的ID還是demoOK它這個DOM其實還是叫demo的DOM裡面的HTML卻改了好的那我們這個這個HTML已經先看完了以後我們來看剛剛我們要從open這個testHTML長的樣子是怎麼樣它就是一個什麼它就是一個innerHTML的樣子就我們剛才要拿的那個東西好的那我們再來看一下這個fetch哦fetch是等一下會講沒有關係好那我們就先看到這邊OK這是adjx很簡單的一個demo這樣子就是我要去get這個裡面它的檔案HTML我拿了以後呢StateChange所以它就是一個response text然後直接把它塞到這裡面去OK嗎這是一個很簡單的你們可能覺得很不簡單可是之後會做更複雜的事情可是它大概在做這件事情就是我們前面學到就是就是unclick它這邊是unreadyStateChangeOK那其實這樣子就可以做到就是我在不刷新頁面的情況下然後我可以拿到這一份資料OK這是嗯一個簡單HTML的demo那當然你看這麼簡單的一小份call要做成像Gmail這麼大一個產品是不是就要很多的很多事情在裡面going onOK好這邊是簡單adjax的demo給大家看
+
+### 影片逐字稿largev2
+
+哈囉大家,我這邊要來做一下就是一個AJAX的DEMO18-2的AJAX DEMO好,那這個我們先首先來看一下這個GIF它可以做到的事情是我點一下然後它就會跑出它頁面都沒有重整喔然後它就會在上面的title也變了然後內容也變了好的,我們先來看一下AJAX這個HTML那因為我現在這邊有裝了一個插件它叫做Live Server所以我們先來看一下這份Code好,那Buddy裡面呢它就是有這樣子Change Content有一個Button好,然後它Unclick是不是會漏的Dock大家可以理解嗎?就是當我有一個按鈕我們這邊先這邊我先把它改成白色好了因為我裝了黑底的保護眼鏡那這邊我們有一個XML HTTP Request這個HTML長這樣OK,它長這樣然後呢這邊是不是有一個按鈕然後這個按鈕我們前面有教到Unclick嘛對不對Unclick按下去以後會去跑JavaScript裡面這個Function好,這個Function我們首先先建了一個XML HTTP Request好,然後這邊呢這個東西如果Unready State Change那會做什麼事情呢會做的事情是如果它Ready State是4然後它有收到的叫做200Status是200那我們會把這個Document的GetElementById去抓這個Demo然後把它的InnerHTMLInnerHTML是不是這個ID這個DIF這個DOM對不對DOM裡面是它的內文對不對InnerHTML這它的Inner的裡面的HTML這個DOM裡面的HTML好那我把這裡面的HTML直接改成我從Server上面收到的Response Text我拿到的東西List就這個裡面它有一個Response Text大家不要緊張也不用現在就是抄這一份Code我會給大家好那我先把這個Unready State Change我們先把它看成是一個它這裡面的一個屬性就是或是因為它是它的指項目嘛它是一個Function嘛所以它是一個Method對不對還記得前面講的它是一個Method然後我們先設定這個Function可能它也不會跑可是它是在Ready State改變的時候它才會執行這裡好的那我們用它去開Get我們要去Get什麼東西呢原本這一份Demo的Code它是localhost然後直接slash test來找這邊那因為我這邊用Live Server我這邊Open Live ServerLive Server它這邊就會幫我做的事情是它會幫我到127.0.0.1冒號50005000是Port然後這邊是它的資料夾的位置好那因為127.0.0.1這個位置其實就是你使用者的就是你自己本機的localhost所以我自己可以把前面這邊把它改成localhost它是一樣的那就是我所以我剛才改成這樣然後我把因為這是它的Port嘛就是它是第幾個Port它是第5500這個號碼的Port好那所以我要抓這個Address嘛那它底下這邊有一個Test的HTML所以我把網址連結這邊HTTPlocalhost500018DemoTest這邊然後True好了我去開這個東西以後呢是我開了以後它會StateChange那StateChange可能會有Status是它可能ReadyState有0,1,2,3嘛那我們只我們不管它中間發生什麼事我們只要第就是ReadyState是4的時候就代表它Ready然後它的Status是200代表收到不是404那這兩個條件都吻合的情況下然後就代表說我們ResponseText已經好了然後我們把它放進去好那這時候我們就做就是它就會做這件事情然後這邊Open完了以後呢我們把它Send好這些就是這份Code再大概解釋一下這份Code要幹嘛好做了以後呢那是不是我們就來看這份Code跑起來是怎樣就是按這邊它會去執行這個LoadDoc好那我們點一下哇它就做這麼它就直接把拿到ResponseText直接畫上去它畫上去就是你看喔大家記得喔就是因為我們是直接在Demo的InnerHTML所以它裡面的內容是改了可是它的ID還是DemoOK它這個DOM其實還是叫Demo的DOM裡面的HTML卻改了好的那我們這這個HTML已經先看完了以後我們來看剛剛我們要從Open這個TextHTML長的樣子是怎麼樣它就是一個什麼它就是一個InnerHTML的樣子就我們剛剛要拿的那個東西好的那我們再來看一下這個Fetch喔Fetch是等一下會講沒有關係那我們就先看到這邊OK這是AJAX很簡單的一個Demo就是我要去Get這個裡面它的檔案HTML我拿了以後呢StateChange所以這個它就是一個ResponseText然後直接把它塞到這裡面去OK嗎這是一個很簡單的你們可能覺得不簡單可是就是之後會做更複雜的事情可是就是它大概在做這件事情就是我們前面學到就是On就是OnClick它這邊是OnReadyStateChange那其實這樣子就可以做到就是我在不刷新頁面的情況下然後可以拿到這一份資料這是一個簡單HTML的Demo那當然你看這麼簡單的一小份Code要做成像Gmail這麼大一個產品是不是就要很多的很多事情在裡面going on好這邊是簡單AJAX的Demo給大家看

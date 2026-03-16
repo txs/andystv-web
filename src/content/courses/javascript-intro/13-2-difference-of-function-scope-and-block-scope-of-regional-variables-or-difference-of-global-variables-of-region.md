@@ -1,0 +1,50 @@
+---
+description: 'Lesson: 13-2 區域變數 Function Scope, Block Scope 的差異 | 區域全域變數的差異'
+duration: 8m35s
+level: beginner
+tags:
+- JavaScript
+tier: free
+title: 13-2 區域變數 Function Scope, Block Scope 的差異 | 區域全域變數的差異
+youtubeId: 4qw-ZQEdbJg
+---
+
+# 13-2 區域變數 Function Scope, Block Scope 的差異 | 區域全域變數的差異
+
+Original: https://course.andys.pro/Javascript-Intro/13-2-difference-of-function-scope-and-block-scope-of-regional-variables-or-difference-of-global-variables-of-region/
+
+### 講義
+
+#### 1. 作用域的演進
+*   **傳統 JavaScript (ES5 以前)**：只有 **函式作用域 (Function Scope)**。使用 `var` 宣告的變數，其有效範圍是整個函式。
+*   **現代 JavaScript (ES6 之後)**：新增了 **區塊作用域 (Block Scope)**。使用 `let` 與 `const` 宣告的變數，範圍被限制在 `{ }` 大括號（例如 `if`, `for`, `while` 的內容區塊）之中。
+
+#### 2. 層層包裹：由內而外的尋找規則
+當函式內嵌套另一個函式時，變數的尋找遵循「就近原則」：
+1. **內部找不到，往外找**：如果最內層函式沒有宣告該變數，它會向上一層（父層）函式尋找。
+2. **外層找不到，往全域找**：持續往外直到找到全域變數為止。
+3. **一旦找到即停止**：只要在某一層找到了變數宣告，搜尋就會停止，不會再往更高層找。
+
+#### 3. 當變數名稱衝突時：區域優先
+區域變數與全域變數「可以同名」，但兩者是獨立的。
+*   如果在區域內宣告了與全域變數同名的變數，函式內部會 **優先使用區域變數** (Local Priority)。
+*   範例：
+    ```javascript
+    var a = "Global";
+    function check() {
+        var a = "Local";
+        console.log(a); // 印出 "Local"
+    }
+    ```
+
+#### 4. 小結
+*   **變數污染**：為了避免區域變數不小心影響到全域，或是不同區塊（如兩個不同的 `for` 迴圈）互相干擾，建議優先使用 `let` 與 `const` 來利用其 **Block Scope** 的特性。
+*   **巢狀執行**：呼叫外層函式才會觸發內層函式的定義與執行。
+
+### 影片逐字稿 (AI 生成)
+
+我們接著來看13-2的區域變數然後我們會先知道區域變數然後知道它的規則還有更多的規則然後區域變數什麼是區域變數呢那在最傳統的JavaScript每一個function都有自己的作用域那你外面是拿不到前面的這些就是拿不到裡面的變數那在13-1我們剛剛已經有做過一個example嘛我們在外面拿不到function裡面的變數好的 那在es6就是2015年的就是還標準化這個es6的標準以前我們JavaScript裡面只有一個function scope可是後來呢我們就加了一個block scope那這個block scope就是又加了兩個東西let跟const好的那採用區塊和這兩個作用域一個是function scope一個是block scope好的function scope就是說代表變數領域只存在於function之中然後外部是沒有辦法拿到這個變數的然後外部也沒辦法存取就是內層的可是內層的可以去讀到外面的好的block scope來看的話呢就是let跟const然後它是在大瓜糊裡面比如說像if啊像while啊像for啊就是在裡面它就是一個區塊我們叫做block scope所以你可以比較容易想清楚的就是說在if裡面你可以let一個i然後這個i只在這個if裡面存在或在這個for裡面只有在這個存在在外就是在其他就不會互相污染到好的我們看一下區域變數的規則那這邊很棒的是它有做一個就是function in function in function那比如說像我這邊要console log一個x那我這麼多個function比如說我在mid的function裡面去先告一個function然後這個function是console log那這個x然後後面才去執行這個function可是其實呢因為你在定義這個的時候它x就會怎樣它就會開始往外轉欸這裡面有沒有區域變數x沒有它往外轉有沒有區域變數x沒有它再往外轉有沒有沒有所以它就直接拿到是全域變數x快速跑一下我們有一個var是x等於10然後我好 然後我們呃我們有一個function然後它是big然後它就是這樣好然後記得應該它在外面也要執行吧好所以我們喔不見了咻咻好 function然後剛剛打得不見了不好意思然後我們在這邊我們要寫big要執行它對不對然後呢這邊有一個function然後是middle然後呢我們在這邊也是要執行它然後這裡面有一個functionsmall然後這邊我們要執行它然後我們在這裡面function in function in function去執行console.logx那因為這邊沒有區域這邊這邊呢沒有區域變數沒有區域變數沒有區域變數所以它直接把這個10在這邊按一下就會跑欸欸它沒有跑喔請問為什麼沒有跑為什麼我哪裡寫錯我的small是不是只是一個方只是一個什麼只是一個function我沒有call function我沒有讓它run對不對這樣是不是就會跑那就像是什麼呢就像是這一個big它是不是沒有所以外面沒有寫個big它最後寫起來它會長怎樣它沒有這一行的時候呢它就只是喔我有宣告一個big韓式裡面呃有big韓式裡面去宣告一個middle韓式然後它後面這裡執行middle韓式然後middle韓式裡面又宣告一個small韓式然後small韓式又執行small韓式然後console.log可是它沒有跑對不對所以你要big它才會跑這樣才runOK所以它是一層一層往外找的大家可以理解嗎但如果說我們今天呢在這邊比如說我在我加一點點東西就是呢我如果在big這邊比如說它往外找往外找還沒找到全域變數的時候我這邊var一個x等於5按錯好不小心存檔好然後我這樣子把它宣告啊然後我宣告了以後呢我去跑big這時候它就會是5喔大家可以理解為什麼嗎它一層一層往外找對不對它這個x找欸沒有再找欸找到5了它就把它5好我就拿這個過來就好我就不要用到OK它是一層一層往外找它找到的時候就可以用好的好的在這邊這個規則大家要注意一點喔就是說區域變數和全域變數是可以允許同名的那只是說同名的時候大家可能很容易會搞混就是可能你們如果之後在面試的時候考試的時候可能會出現這一題它就是要讓你就是清楚就是說嗯你到底知不知道到底global優先就是global和local到底就是這個a會是什麼值OK那其實是local優先的就是你如果在這邊找不到才往外找OK嗎所以在這邊這個跑起來會是什麼會是local大家要這一趟call對不對我又按到存檔存檔沒事然後我們這邊是它剛才是叫什麼bar aa等於global然後裡面有什麼function getfunction get底線a然後這邊有vara等於local然後我們log記得這個get應該知道是新的好的它就會直接用這個OK因為它有區域變數它直接用區域變數雖然這兩個東西同名好的那如果我們今天把這個local拿掉那是不是它就會拿global對不對它沒有區域變數嘛它沒有區域變數它就拿到外面的這個OK所以如果找到變數就不會再往上乘找OK所以這邊是十二之三欸欸十三之二sorry可以不知道安全你可以對是好對可以你
+
+### 影片逐字稿largev2
+
+我們接著來看13-2區域變數然後我們會先知道區域變數然後知道它的規則還有更多的規則區域變數,什麼是區域變數呢?那在最傳統的JavaScript每一個function都有自己的作用域那你外面是拿不到前面的這些就是拿不到裡面的變數那在13-1我們剛剛已經有做過一個example嘛,對不對我們在外面拿不到function裡面的變數好的,那在ES6就是2015年的就是標準化ES6的標準以前我們JavaScript裡面只有一個function scope可是後來呢,我們又加了一個block scope那這個block scope就是又加兩個東西嘛let跟const好的,那採用區塊和這兩個作用域一個是function scope,一個是block scope好的,function scope就是說代表變數領域只存在於function之中然後外部是沒有辦法拿到這個變數的然後外部也沒辦法存取,就是內層的可是內層的可以去讀到外面的好的,block scope來看的話呢就是let跟const然後它是在大括弧裡面比如說像if啊,像while啊,像for啊就是在裡面,它就是一個區塊我們叫做block scope所以你可以比較容易想清楚的就是說在if裡面你可以let一個i然後這個i只在這個if裡面存在或在這個for裡面只有在這個存在在其他就不會互相污染到好了,我們看一下區域變數的規則那這邊很棒的是它有做一個function in function in function那比如說像我這邊要console.log一個x那我這麼多個function比如說我在mid的function裡面推薦到一個function然後這個function是console.log那這個x,然後後面才去執行這個function可是其實呢,因為你在定義這個的時候它x就會怎樣,它就會開始往外走可是這裡面有沒有區域變數x,沒有,它往外走有沒有區域變數x,沒有,它往外走有沒有,沒有,所以它就直接拿到的是全域變數x,10快速跑一下我們有一個var是x等於10然後我們有一個function然後它是big然後它就是這樣然後記得,應該它在外面也要執行吧好,所以我們喔不見了好function剛剛打不見了拍謝然後我們在這邊我們要寫big要執行它對不對然後呢,這邊有一個function然後是mid然後呢,我們在這邊也是要執行它mid然後這裡面有一個functionsmall然後這邊我們要執行它然後我們在這裡面function去執行console.log x那因為這邊沒有區域變數x這邊呢沒有區域變數x所以它直接把這個10按一下就會跑它沒有跑喔請問為什麼沒有跑為什麼我哪裡寫錯我的small是不是只是一個只是一個什麼,只是一個function我沒有call function,我沒有讓它run嘛對不對,這樣是不是就會跑那就像是什麼呢就像是這個big它是不是沒有,所以外面沒有寫個big它最後寫起來它會長怎樣它沒有這一行的時候呢它就只是,喔我有宣告一個big函式裡面有big函式裡面去宣告一個mid函式然後它後面這裡執行mid函式然後mid函式裡面又宣告一個small函式然後small函式又執行small函式,然後console.log可是它沒有跑,對不對所以你要big它才會跑這樣才會run所以它是一層一層往外走的大家可以理解嗎但如果說我們今天呢在這邊,比如說我在我加一點點東西就是呢,我如果在big這邊比如說它往外走還沒找到全域變數的時候我這邊的var一個x等於5按錯了不小心存檔然後這樣子把它宣告啊然後宣告了以後呢我去跑big這時候它就會是5喔大家可以理解為什麼嗎它一層一層往外走對不對它這個x找沒有,再找找到5了,它就把它5我就拿這個過來就好我就不要用到它是一層一層往外走它找到的時候就可以用好的在這邊這個規則大家要注意一點喔就是說區域變數和全域變數是可以允許同名的那只是說同名的時候大家可能很容易會搞混就是可能你們如果之後在面試的時候考試的時候可能會出現這一題它就是要讓你清楚就是說你到底知不知道到底global優先跟local就是這個a會是什麼值那其實是local優先了就是你如果在這邊找不到才往外走OK嗎所以在這邊這個跑起來會是什麼會是local大家要這一段call我又按到存檔沒有存檔沒事然後我們這邊是bar aa等於global然後裡面有什麼function get afunctionget 底線 a東西然後這邊有bar a等於local然後我們log然後記得這個get a應該是要執行的好了它就會直接用這個因為它有區域變數它直接用區域變數雖然這兩個東西同名那如果我們今天把這個local拿掉那是不是它就會拿global它沒有區域變數它沒有區域變數a它就拿到外面的這個a所以如果找到變數就不會再往上走所以這邊是12-313-2

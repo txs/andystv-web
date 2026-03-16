@@ -1,0 +1,406 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Giscus from '../../../components/Giscus.astro';
+import Newsletter from '../../../components/Newsletter.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ id }) => id.startsWith('zh-cn/'));
+  return posts.map(post => ({
+    params: { slug: post.slug.replace('zh-cn/', '') },
+    props: { post },
+  }));
+}
+
+type Props = {
+  post: CollectionEntry<'blog'>;
+};
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+// Related posts by tags
+const allPosts = (await getCollection('blog'))
+  .filter(p => !p.data.draft && p.id.startsWith('zh-cn/') && p.slug !== post.slug);
+const related = allPosts
+  .filter(p => p.data.tags.some(t => post.data.tags.includes(t)))
+  .slice(0, 3);
+---
+
+<BaseLayout title={`${post.data.title} — Andy's Pro`} description={post.data.description}>
+  <div class="post-page">
+    <!-- Reading progress bar -->
+    <div class="reading-bar" id="reading-bar"></div>
+
+    <div class="post-layout">
+      <!-- Article -->
+      <article class="post-article">
+        <header class="post-header">
+          <a href="/zh-cn/blog" class="back-btn">← 博客</a>
+
+          <div class="post-tags">
+            {post.data.tags.map((tag: string) => (
+              <span class="ptag">{tag}</span>
+            ))}
+          </div>
+
+          <h1>{post.data.title}</h1>
+
+          <p class="post-lead">{post.data.description}</p>
+
+          <div class="post-meta-row">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {new Date(post.data.pubDate).toLocaleDateString('zh-TW', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+            {post.data.updatedDate && (
+              <span class="updated">
+                · 更新于 {new Date(post.data.updatedDate).toLocaleDateString('zh-TW')}
+              </span>
+            )}
+          </div>
+        </header>
+
+        <div class="prose" id="prose-content">
+          <Content />
+        </div>
+
+        <footer class="post-footer">
+          <!-- Share -->
+          <div class="share-row">
+            <span>分享：</span>
+            <button class="share-btn" id="share-twitter">𝕏 Twitter</button>
+            <button class="share-btn" id="share-copy">🔗 复制链接</button>
+          </div>
+        </footer>
+
+        <!-- Newsletter -->
+        <Newsletter />
+
+        <!-- Comments -->
+        <Giscus />
+      </article>
+
+      <!-- Sidebar: TOC + related -->
+      <aside class="post-sidebar">
+        <div class="sidebar-section sticky-nav">
+          <h4 class="sidebar-title">目录</h4>
+          <nav class="toc" id="toc">
+            <!-- Dynamically populated by JS -->
+          </nav>
+        </div>
+
+        {related.length > 0 && (
+          <div class="sidebar-section">
+            <h4 class="sidebar-title">相关文章</h4>
+            <div class="related-list">
+              {related.map(r => (
+                <a href={`/zh-cn/blog/${r.slug.replace('zh-cn/', '')}`} class="related-item">
+                  <span class="related-title">{r.data.title}</span>
+                  <time>{new Date(r.data.pubDate).toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })}</time>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .post-page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 6rem;
+    position: relative;
+  }
+
+  .reading-bar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--gradient-brand);
+    z-index: 101;
+    transition: width 0.1s;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .post-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 4rem;
+    align-items: start;
+    margin-top: 2rem;
+  }
+
+  /* ====== Article ====== */
+  .post-article {
+    min-width: 0;
+    max-width: 720px;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    padding: 0.35rem 0;
+    transition: color 0.2s;
+    margin-bottom: 1.5rem;
+  }
+
+  .back-btn:hover { color: var(--accent-violet); }
+
+  .post-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .post-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .ptag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-violet);
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+  }
+
+  .post-header h1 {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .post-lead {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .post-meta-row {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .updated { color: var(--text-tertiary); }
+
+  .prose {
+    margin: 2.5rem 0;
+  }
+
+  .post-footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .share-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .share-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-glass-hover);
+  }
+
+  /* ====== Sidebar ====== */
+  .post-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .sticky-nav {
+    position: sticky;
+    top: calc(64px + 1.5rem);
+  }
+
+  .sidebar-section {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: 14px;
+    padding: 1.25rem;
+  }
+
+  .sidebar-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 1rem;
+  }
+
+  .toc {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .toc :global(a) {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
+    border-left: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .toc :global(a:hover), .toc :global(a.active) {
+    color: var(--accent-violet);
+    background: rgba(139, 92, 246, 0.08);
+    border-left-color: var(--accent-violet);
+  }
+
+  .toc :global(a.level-3) { padding-left: 1rem; font-size: 0.78rem; }
+  .toc :global(a.level-4) { padding-left: 1.5rem; font-size: 0.75rem; }
+
+  .related-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .related-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .related-item:hover { background: var(--bg-surface-hover); }
+
+  .related-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .related-item time {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 1024px) {
+    .post-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .post-sidebar {
+      order: -1;
+      display: none; /* hide on mobile for cleanliness */
+    }
+  }
+</style>
+
+<script>
+  // ---- Reading progress ----
+  const bar = document.getElementById('reading-bar');
+  window.addEventListener('scroll', () => {
+    const docH = document.body.scrollHeight - window.innerHeight;
+    const pct = docH > 0 ? (window.scrollY / docH) * 100 : 0;
+    if (bar) bar.style.width = `${pct}%`;
+  });
+
+  // ---- TOC generation ----
+  const tocEl = document.getElementById('toc');
+  const prose = document.getElementById('prose-content');
+  if (tocEl && prose) {
+    const headings = prose.querySelectorAll('h2, h3, h4');
+    if (headings.length > 0) {
+      headings.forEach((h, i) => {
+        if (!h.id) h.id = `heading-${i}`;
+        const a = document.createElement('a');
+        a.href = `#${h.id}`;
+        a.textContent = h.textContent || '';
+        const tagName = h.tagName.toLowerCase();
+        a.className = tagName === 'h3' ? 'level-3' : tagName === 'h4' ? 'level-4' : '';
+        tocEl.appendChild(a);
+      });
+
+      // Highlight active heading on scroll
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(e => {
+            const id = e.target.id;
+            const link = tocEl.querySelector(`a[href="#${id}"]`);
+            if (e.isIntersecting) {
+              tocEl.querySelectorAll('a').forEach(a => a.classList.remove('active'));
+              link?.classList.add('active');
+            }
+          });
+        },
+        { rootMargin: '-20% 0px -75% 0px' }
+      );
+      headings.forEach(h => observer.observe(h));
+    } else {
+      tocEl.closest('.sidebar-section')?.remove();
+    }
+  }
+
+  // ---- Share actions ----
+  document.getElementById('share-twitter')?.addEventListener('click', () => {
+    const text = encodeURIComponent(document.title);
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+  });
+
+  document.getElementById('share-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      const btn = document.getElementById('share-copy');
+      if (btn) { btn.textContent = '✅ 已複製！'; setTimeout(() => { btn.textContent = '🔗 复制链接'; }, 2000); }
+    });
+  });
+</script>

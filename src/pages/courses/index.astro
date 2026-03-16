@@ -1,0 +1,265 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allCourses = (await getCollection('courses')).sort((a, b) => {
+  const tierOrder = { free: 0, pro: 1, premium: 2 };
+  return tierOrder[a.data.tier as keyof typeof tierOrder] - tierOrder[b.data.tier as keyof typeof tierOrder];
+});
+
+const freeCourses = allCourses.filter(course => course.data.tier === 'free');
+const proCourses = allCourses.filter(course => course.data.tier === 'pro');
+const premiumCourses = allCourses.filter(course => course.data.tier === 'premium');
+---
+
+<BaseLayout title="線上課程 - Andy's Pro" description="專業的程式開發與 AI 實踐課程">
+  <main class="courses-page">
+    <div class="container">
+      <header class="page-header">
+        <h1>線上課程</h1>
+        <p>從基礎到進階，系統性學習程式開發與 AI 技術</p>
+      </header>
+
+      <!-- 免費課程 -->
+      {freeCourses.length > 0 && (
+        <section class="courses-section">
+          <h2 class="section-title">免費課程</h2>
+          <div class="courses-grid">
+            {freeCourses.map(course => (
+              <a href={`/courses/${course.slug}`} class="course-card">
+                <div class="course-header">
+                  <span class="course-level">{course.data.level}</span>
+                  <span class="course-tier">FREE</span>
+                </div>
+                <h3>{course.data.title}</h3>
+                <p class="course-description">{course.data.description}</p>
+                <div class="course-meta">
+                  <span class="duration">⏱️ {course.data.duration}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- 專業課程 -->
+      {proCourses.length > 0 && (
+        <section class="courses-section">
+          <h2 class="section-title">專業課程</h2>
+          <div class="courses-grid">
+            {proCourses.map(course => (
+              <a href={`/courses/${course.slug}`} class="course-card pro">
+                <div class="course-header">
+                  <span class="course-level">{course.data.level}</span>
+                  <span class="course-tier">PRO</span>
+                </div>
+                <h3>{course.data.title}</h3>
+                <p class="course-description">{course.data.description}</p>
+                <div class="course-meta">
+                  <span class="duration">⏱️ {course.data.duration}</span>
+                  {course.data.price && <span class="price">${course.data.price}</span>}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- 高級課程 -->
+      {premiumCourses.length > 0 && (
+        <section class="courses-section">
+          <h2 class="section-title">高級課程</h2>
+          <div class="courses-grid">
+            {premiumCourses.map(course => (
+              <a href={`/courses/${course.slug}`} class="course-card premium">
+                <div class="course-header">
+                  <span class="course-level">{course.data.level}</span>
+                  <span class="course-tier">PREMIUM</span>
+                </div>
+                <h3>{course.data.title}</h3>
+                <p class="course-description">{course.data.description}</p>
+                <div class="course-meta">
+                  <span class="duration">⏱️ {course.data.duration}</span>
+                  {course.data.price && <span class="price">${course.data.price}</span>}
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {allCourses.length === 0 && (
+        <p class="no-courses">目前沒有課程，敬請期待！</p>
+      )}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .courses-page {
+    padding: 4rem 0;
+    min-height: calc(100vh - 200px);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #171717;
+  }
+
+  .page-header p {
+    font-size: 1.125rem;
+    color: #525252;
+  }
+
+  .courses-section {
+    margin-bottom: 4rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #171717;
+  }
+
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .course-card {
+    display: block;
+    padding: 1.5rem;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .course-card:hover {
+    border-color: #171717;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .course-card.pro {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+  }
+
+  .course-card.pro:hover {
+    border-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  }
+
+  .course-card.premium {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, #ffffff 0%, #fffbf0 100%);
+  }
+
+  .course-card.premium:hover {
+    border-color: #d97706;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  }
+
+  .course-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+
+  .course-level {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #f3f4f6;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: capitalize;
+  }
+
+  .course-tier {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #171717;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .course-card.pro .course-tier {
+    background: #3b82f6;
+  }
+
+  .course-card.premium .course-tier {
+    background: #f59e0b;
+  }
+
+  .course-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #171717;
+  }
+
+  .course-description {
+    font-size: 0.9375rem;
+    color: #525252;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .course-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+    color: #a3a3a3;
+  }
+
+  .duration {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .price {
+    font-weight: 600;
+    color: #171717;
+  }
+
+  .no-courses {
+    text-align: center;
+    padding: 4rem 0;
+    font-size: 1.125rem;
+    color: #a3a3a3;
+  }
+
+  @media (max-width: 768px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .courses-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

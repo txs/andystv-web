@@ -1,0 +1,55 @@
+---
+description: 'Lesson: 12-2 匿名函式 Anonymous 表達式 Expressions 陳述式 Statements, Function
+  Expressions'
+duration: 7m43s
+level: beginner
+tags:
+- JavaScript
+tier: free
+title: 12-2 匿名函式 Anonymous 表達式 Expressions 陳述式 Statements, Function Expressions
+youtubeId: VTtESFWdZoc
+---
+
+# 12-2 匿名函式 Anonymous 表達式 Expressions 陳述式 Statements, Function Expressions
+
+Original: https://course.andys.pro/Javascript-Intro/12-2-anonymous-expressions-anonymous-expressions-statements-function-expressions/
+
+### 講義
+
+#### 1. 什麼是匿名函式 (Anonymous Function)？
+匿名函式就是「沒有名稱」的函式。它通常用於：
+*   **立即執行**：不需要取名，寫完馬上跑。
+*   **賦值給變數**：將函式當作一個值存起來。
+
+#### 2. 立即呼叫函式表達式 (IIFE)
+語法範例：`(function(x, y) { return x * y; })(8, 7);`
+*   第一對括號 `(...)` 用來包裝這個匿名函式。
+*   第二對括號 `(8, 7)` 用於「立即執行」並傳入參數。
+*   這在處理暫時性的邏輯或避免全域變數污染時非常有用。
+
+#### 3. 函式陳述式 vs. 函式表達式
+這兩者在 JavaScript 中的執行順序（Hoisting）行為不同：
+
+*   **函式陳述式 (Function Declaration)**：
+    ```javascript
+    function square(x) { return x * x; }
+    ```
+    - **特點**：可以在程式碼宣告的「位置之前」就被呼叫。JS 會自動將宣告提升到最上方。
+
+*   **函式表達式 (Function Expression)**：
+    ```javascript
+    var square = function(x) { return x * x; };
+    ```
+    - **特點**：必須「先宣告，後呼叫」。如果在賦值給變數之前就呼叫，會產生 `square is not a function` 的錯誤。
+
+#### 4. 物件化的函式
+在 JavaScript 中，「函式也是一種物件 (Function is an Object)」。
+因此，函式可以被當作參數傳入另一個函式，也可以由函式回傳另一個函式。這種靈活性是 JavaScript 強大的核心之一。
+
+### 影片逐字稿 (AI 生成)
+
+好 在十二之二 我們要開始講匿名韓式然後前面我們會先介紹什麼是匿名韓式然後匿名韓式有兩種方法一種是Expressions的寫法 就是表達式另外一種是陳述式Statements的寫法然後我們會看一下Function的Expressions好 匿名韓式就是沒有名稱的韓式那這種韓式呢 其實有它一定的方便性就是當我要用到的時候 我再去宣告它就可以了好了 首先我們看到 它有用兩個小括弧把一個Function 直接寫Function然後小括號 大括號 return 10然後它這邊其實 你看它前面沒有名稱所以我們叫它匿名韓式嘛好 立即建立 立即使用所以我們在Alert裡面呢 我們去建立一個匿名韓式對不對 這邊把前面這個東西寫完那我要去執行它 這邊有Function 有XY那我要怎麼把XY的值丟給它那以前 我們在前面的時候我們是不是要執行一個Square我們是不是要叫Square然後後面再去用小括號然後把它原本 比如說像剛才的Square是需要X所以把X去取得X嘛那這邊我們需要X跟Y所以你會看到這個小括號後面又有一個小括號這個小括號裡面有8跟7那這個8跟7代表是就是X跟Y然後可以直接這樣來用那所以我們大家可以來把這個程式先複製一下然後POPOPOPO看然後這個韓式 匿名韓式然後後面有8和7嗯 哪邊寫錯喔 我這邊有減號這邊有減號這邊有減號好56 有沒有那這邊呢 我可以把XY值去改8跟864OK嗎那如果說你今天你後面沒有這個小括號還記得小括號嗎如果沒有小括號的話它還會是什麼它就是嗯 這邊喔 少一個括號沒有小括號的話它就是一個Function這個Function是長的是這樣子OK那我們有一個小括號才會是有Function喔這樣子這樣子 對不對然後裡面要放X跟Y所以可以放3跟5然後它就會把它乘在一起這樣大家可以理解嗎就這個小括號就是你把它當成是一個在名字的地方你用小括號刮起來裡面放一個韓式然後後面去執行就是要再放一個括號然後把值傳進去OK才可以call它好這邊要講的是表達式和乘數式那就是怎麼樣來寫一個Function那你輸入後可以直接回傳一串乘式就是Expression然後它可以存成變數所以我們看一下下面像這個就是Expression有沒有就是它可以存成變數它是一個Function然後它把值然後這樣子然後它可以直接把它存成變數這個叫做Expression那Statement是不行喔Statement不就不會回傳一個值If for和 while就是類似像這樣然後它不能傳成一個它不能存成一個變數OKOK好了那我們這邊來看一下Function的Expression那物件可以就是韓式是一種物件就Function是一個物件所以你可以把它存成變數那Function物件可以存成變數那韓式就可以存成變數因為Function是一種ObjectOK那這邊呢這裡就有一個Function它建一個Function然後呢在這裡面它有一個程式就是這樣那所以你這個程式其實你有兩種寫法對不對這個是Expression的寫法和另外一種是這種寫法就你可以寫Function然後SquareX然後ReturnX乘以XOK然後這樣你就可以直接Call SquareOK 這是一種寫法就是用Expression的做法就是我們把Square變成Function變成這樣然後把這個Function建好了以後直接把它存進去那這個時候這樣子FunctionExpression的寫法這個Square也是就是這個FunctionOK那你也可以直接Call Square然後把值丟進去就可以Call它了我們看到這邊我們看到這邊這邊你可以Square 5去Call它同時你如果把它寫成這樣子的格式的話你也是可以Square 5去Call它因為它都是一個Function只是寫的表達方式不太一樣它都是在建一個Function叫Square的Function好的這邊我們要提到的這兩個就是韓式宣告和韓式表達式不一樣的地方首先你如果用前面這種Function然後這樣子寫的方法的話你可以直接Console比如說你可以把Console Log寫在這個宣告的上面然後這樣子先後順序是沒有關係的是OK的可是你如果是用韓式表達式的時候呢因為你在這上面你根本都還沒有Square這個東西對不對就是你用宣告的方法的話你可以在上面用可是你如果沒有宣告你不是用宣告你是用表達式的方法你這樣子它就會出現Square is not a function因為它在這邊它根本就還不認識Square是什麼它有順序性就是你要先var square等於Function然後後面再去Console LogSquare才可以可是你用韓式宣告的話不用你用韓式宣告的話你在後面宣告前面去用也是可以用的OK這邊是12G2OK好那這邊就是找到最大供應數和最小供備數好OKOKOKOKOKOK
+
+### 影片逐字稿largev2
+
+好,在十二之二我們要開始講匿名函式然後前面我們會先介紹什麼是匿名函式然後匿名函式有兩種方法一種是Expressions的寫法,就是表達式另外一種是陳述式,Statements的寫法然後我們會看一下Function的Expression好,匿名函式就是沒有名稱的函式那這種函式呢,其實有它一定的方便性就是當我要用到的時候,我再去宣告它就可以了好的,首先我們看到它有用兩個小括弧把一個Function,直接寫Function然後小括號、大括號、Return 10然後這邊其實你看它前面沒有名稱所以我們叫它匿名函式嘛好,立即建立、立即使用所以我們在Alert裡面呢我們去建立一個匿名函式,對不對我們這邊先把前面這個東西寫完那我要去執行它,這邊有Function、有X、Y那我要怎麼把X、Y的值丟給它那以前我們在前面的時候我們是不是要執行一個Square我們是不是要叫Square,然後後面再去用小括號然後把它原本,比如說像剛才Square是需要X所以把X去取得X嘛那這邊我們需要X跟Y所以你會看到這個小括號後面又有一個小括號這個小括號裡面有8跟7那這個8跟7代表是就是X跟Y然後可以直接這樣來用那所以我們大家可以來把這個程式先複製一下我們PO到看好,這個函式,匿名函式然後後面有8和7嗯?哪邊寫錯?喔,我這邊有減號這邊有減號好,56有沒有那這邊呢,我可以把X、Y的值去改8跟864,OK嗎?那如果說你今天你後面沒有這個小括弧還記得小括弧嗎?如果沒有小括弧的話還會是什麼?它就是這邊,喔,少一括弧沒有小括弧的話它就是一個Function這個Function是長得是這樣子OK那我們有一個小括弧才會是有Function喔這樣子對不對然後裡面要放X跟Y所以可以放3跟5然後它就會把它撐在一起這樣大家可以理解嗎?就這個小括弧就你把它當成是一個在名字的地方你用小括弧刮起來裡面放一個函式然後後面去執行就是要再放一個括弧然後把值傳進去才可以Call它好,這邊要講的是表達式和乘數式那就是怎麼樣來寫一個Function那你輸入後可以直接回傳一串乘式就是Expression然後它可以存成變數所以我們看一下下面像這個就是Expression有沒有就它可以存成變數它是一個Function然後它把值這樣子然後可以直接把它存成變數這個叫做Expression那Statement是不行喔Statement就不會回傳一個值if for和while就是類似像這樣然後它不能存成一個變數好了,那我們這邊來看一下Function的Expression那物件可以就是函式是一種物件就Function是一個物件所以你可以把它存成變數那Function物件可以存成變數那函式就可以存成變數因為Function是一種Object那這邊呢這裡就有一個Function它建一個Function然後呢在這裡面它有一個程式就是這樣那所以你這個程式其實你有兩種寫法對不對這個是Expression的寫法那另外一種是這種寫法就你可以寫Function然後SquareX然後ReturnX乘以XOK然後這樣你就可以直接Call SquareOK,這是一種寫法或是有另外一種寫法我們可以把它就是用Expression的做法就是我們把Square變Function變這樣然後把這個Function建好了以後直接把它存進去那這個時候這樣子FunctionExpression的寫法這個Square也是就是這個FunctionOK,那你也可以直接Call Square然後把紙丟進去就可以Call它了我們看到這邊這邊你可以Square5去Call它同時你如果把它寫成這樣子的格式的話你也是可以Square5去Call它因為它都是一個Function只是寫的表達方式不太一樣它都是在建一個Function叫Square的Function好的這邊我們要提到的這兩個就是韓式宣告和韓式表達式不一樣的地方首先你如果用前面這種Function然後這樣子寫的方法的話你可以直接Console比如說你可以把Console.log寫在這個宣告的上面然後這樣子先後順序是沒有關係的是OK的可是你如果是用韓式表達式的時候呢因為你在這上面根本都還沒有Square這個東西對不對就是你用宣告的方法的話你可以在上面用可是你不是用宣告你是用表達式的方法這樣子它就會出現Square is not a function因為它在這邊根本就還不認識Square是什麼它有順序性就是你要先VarSquare的Function然後後面再去Console.logSquare才可以可是你用韓式宣告的話不用你用韓式宣告的話你在後面宣告前面去用也是可以用的這邊是12-2那這邊就是找到最大公因數和最小公分數
