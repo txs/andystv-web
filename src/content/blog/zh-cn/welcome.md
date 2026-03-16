@@ -8,7 +8,9 @@ featured: true
 
 # 欢迎来到 Andy's Pro！
 
-这里是分享技术见解、开发心得与 AI 应用创意的空间。我是 **台大资工 CMLab** 的研究生，专注于解决 AIGC (AI Generated Content) 技术挑战，并于 2023 年在洛杉矶 **SIGGRAPH '23** 发表了 **"SegAnimeChara"** 研究成果。
+这里是分享技术见解、开发心得与欢迎来到 **Andys.Pro**！我目前是 **台大资工 CMLab** 的研究员，专注于解决 AIGC 生成内容的技术挑战。2023 年，我于洛杉矶 **SIGGRAPH '23** 发表了我的研究成果 **SegAnimeChara**。目前，我正致力于探索基于 **MMDit** 的**多代理人动漫资源生成 (Multi-Agent Anime Asset Generation)** 技术。
+
+除了学术研究，我曾于 **资策会 (III)** 担任技术讲师，教授 Python 与 Javascript 课程。在这个博客中，我会分享关于 AI 前沿技术、React 实战经验，以及我结合科技与运动生活的种种思考。
 
 我专注于将最前沿的工具融入日常工作流中，专注于以下领域：
 

@@ -8,9 +8,9 @@ featured: true
 
 # Welcome to Andy's Pro!
 
-This is a space where technical insights, development experiences, and AI creativity collide. I'm a researcher at **NTU CSIE CMLab** focusing on AI Generated Content (AIGC). I recently presented **"SegAnimeChara"** at **SIGGRAPH '23** in Los Angeles.
+Welcome to **Andys.Pro**! I'm currently a researcher at **NTU CSIE CMLab**, focusing on solving complex problems in AI Generated Content (AIGC). In 2023, I had the honor of presenting my research, **SegAnimeChara**, at **SIGGRAPH '23** in Los Angeles. Currently, I'm exploring the frontiers of **Multi-Agent Anime Asset Generation** powered by **MMDit**.
 
-I focus on integrating modern tools into professional workflows, specifically in these areas:
+In addition to my research, I've served as a Technical Instructor at the **Institute for Information Industry (III)**, where I've taught Python and Javascript. On this blog, I share my professional insights, technical deep-dives into React and Astro, and my journey across AI, engineering, and personal interests like tennis.
 
 ## 🤖 AI Tools & Applications
 

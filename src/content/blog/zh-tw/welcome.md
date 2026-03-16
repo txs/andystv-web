@@ -8,13 +8,12 @@ featured: true
 
 # 歡迎來到 Andy's Pro！
 
-這裡是分享技術見解、開發心得與 AI 應用創意的空間。我是 **台大資工 CMLab** 的研究生，專注於解決 AIGC (AI Generated Content) 技術挑戰，並於 2023 年在洛杉磯 **SIGGRAPH '23** 發表了 **"SegAnimeChara"** 研究成果。
+這裡是分享技術見解、開發心得與歡迎來到 **Andys.Pro**！我目前是 **台大資工 CMLab** 的研究員，專注於解決 AIGC 生成內容的技術挑戰。2023 年，我於洛杉磯 **SIGGRAPH '23** 發表了我的研究成果 **SegAnimeChara**。目前，我正致力於探索基於 **MMDit** 的**多代理人動漫資源生成 (Multi-Agent Anime Asset Generation)** 技術。
 
-我專注於將最前沿的工具融入日常工作流中，專注於以下領域：
+除了學術研究，我曾於 **資策會 (III)** 擔任技術講師，教授 Python 與 Javascript 課程。在這個部落格中，我會分享關於 AI 前沿技術、React 實戰經驗，以及我結合科技與運動生活的種種思考。
 
 ## 🤖 AI 工具與應用
 
-- VS Code Copilot & Claude Code
 - AntiGravity 智能助手
 - ComfyUI 繪圖與 Qwen 3.5 本地模型
 
