@@ -8,7 +8,9 @@ featured: true
 
 # Welcome to Andy's Pro!
 
-This is a space where technical insights, development experiences, and AI creativity collide. I focus on integrating modern tools into professional workflows, specifically in these areas:
+This is a space where technical insights, development experiences, and AI creativity collide. I'm a researcher at **NTU CSIE CMLab** focusing on AI Generated Content (AIGC). I recently presented **"SegAnimeChara"** at **SIGGRAPH '23** in Los Angeles.
+
+I focus on integrating modern tools into professional workflows, specifically in these areas:
 
 ## 🤖 AI Tools & Applications
 
